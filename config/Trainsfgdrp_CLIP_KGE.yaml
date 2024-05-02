@@ -1,0 +1,22 @@
+model_type: 1
+model_name: TransE
+
+marker: KGE_Text_Text
+
+cuda_name: cuda
+
+
+dataset_name: zinc_frags_total_split
+
+
+model:
+  
+  drug_module: 
+    input_drug_feature_dim: 90
+    input_drug_edge_dim: 5
+    use_drug_edge: True # False
+    fc_1_dim: 1500
+    fc_2_dim: 128
+    dropout: 0.5
+    transformer_dropout: 0.5
+

@@ -1,0 +1,121 @@
+data:
+  # data: davis
+  data: ['kiba', 'QM9']
+  dir: 'data/'
+  batch_size: 128
+  max_node_num: 100
+  max_feat_num: 10
+  init: atom
+
+
+# ckpt: Apr11-10:25:01
+# ckpt: Apr14-11:30:11_30 比较欧克
+ckpt: Apr17-15:00:22_37
+
+sde:
+  x: 
+    type: VP
+    beta_min: 0.1
+    beta_max: 1.0
+    num_scales: 1000
+  adj:
+    type: VE
+    beta_min: 0.2
+    beta_max: 1.0
+    num_scales: 1000
+
+model:
+  x: ScoreNetworkX
+  adj: ScoreNetworkA
+  conv: GCN
+  num_heads: 4
+  depth: 2
+  adim: 16
+  nhid: 16
+  num_layers: 3
+  num_linears: 3
+  c_init: 2
+  c_hid: 8
+  c_final: 4
+
+
+train:
+  task: dta
+  name: based_qm9_kiba_v1e_gdss_multi_with_QM9
+  num_epochs: 300
+  save_interval: 5
+  print_interval: 5
+  reduce_mean: False
+  lr: 0.0001
+  lr_schedule: True
+  ema: 0.999
+  weight_decay: 0.0001
+  grad_norm: 1.0
+  lr_decay: 0.999
+  eps: 1.0e-5
+
+
+sampler:
+  predictor: Reverse
+  corrector: Langevin
+  snr: 0.2
+  scale_eps: 0.7
+  n_steps: 1
+
+sample:
+  use_ema: False
+  noise_removal: True
+  probability_flow: False
+  eps: 1.0e-4
+  seed: 42
+
+controller:
+  type: text
+  base_model: TransDTA
+  model_config: ''
+  target_txt_path: ./data/kiba/proteins.txt
+  model_name: TransE
+  marker: KGE_Text_Number
+  cuda_name: cuda
+  dataset_name: kiba
+  pth_dir: ./checkpoints/kiba/CLDR_Apr14-08:46:26_30.pth
+
+  label: 
+    # cell: 687799
+    target: 11
+    kd: 0.65
+  # pth_dir: ./checkpoints/davis/CLDR_Apr11-08:37:33_50.pth
+
+  # label: 
+  #   # cell: 687799
+  #   target: 119
+  #   kd: 9.0
+    
+
+  model:
+
+    drug_module: 
+      fc_1_dim: 512
+      fc_2_dim: 128
+      dropout: 0.5
+      transformer_dropout: 0.5
+
+    target_module: 
+      module_name: Transformer
+      input_cell_feature_dim: 735
+      fc_1_dim: 128
+      layer_num: 3
+      layer_hyperparameter:
+        - 7
+        - 7
+        - 7
+      transformer_dropout: 0.5
+
+
+    fusion_module:
+      fc_1_dim: 1024
+      fc_2_dim: 256
+      fc_3_dim: 1
+      dropout: 0.5
+      transformer_dropout: 0.5
+      fusion_mode: concat

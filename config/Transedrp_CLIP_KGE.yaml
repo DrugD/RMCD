@@ -1,0 +1,41 @@
+model_type: 1
+model_name: TransE
+
+marker: KGE_Text_Number
+
+cuda_name: cuda
+
+
+dataset_name: GDSCv2
+
+
+model:
+  
+  drug_module: 
+    input_drug_feature_dim: 90
+    input_drug_edge_dim: 5
+    use_drug_edge: True # False
+    fc_1_dim: 1500
+    fc_2_dim: 128
+    dropout: 0.5
+    transformer_dropout: 0.5
+
+  cell_module: 
+    module_name: Transformer
+    input_cell_feature_dim: 735
+    fc_1_dim: 128
+    layer_num: 3
+    layer_hyperparameter:
+      - 15
+      - 15
+      - 15
+    transformer_dropout: 0.5
+
+
+  fusion_module:
+    fc_1_dim: 1024
+    fc_2_dim: 256
+    fc_3_dim: 1
+    dropout: 0.5
+    transformer_dropout: 0.5
+    fusion_mode: concat

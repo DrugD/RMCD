@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=1 python main.py --type train --config ./config/qm9.yaml --condition 0.0

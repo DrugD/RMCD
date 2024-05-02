@@ -1,0 +1,4 @@
+python /home/lk/project/mol_generate/GDSS/evaluation/eval_others/eval.py --type x --condition x --config /home/lk/project/mol_generate/GDSS/config/sample_gdscv2.yaml
+python /home/lk/project/mol_generate/GDSS/evaluation/eval_others/eval.py --type x --condition x --config /home/lk/project/mol_generate/GDSS/config/sample_gdscv2_.yaml
+python /home/lk/project/mol_generate/GDSS/evaluation/eval_others/eval.py --type x --condition x --config /home/lk/project/mol_generate/GDSS/config/sample_gdscv2__.yaml
+python /home/lk/project/mol_generate/GDSS/evaluation/eval_others/eval.py --type x --condition x --config /home/lk/project/mol_generate/GDSS/config/sample_gdscv2___.yaml

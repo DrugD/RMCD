@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=2 python main.py --type cldt_train --config /home/lk/project/mol_generate/GDSS/config/cldt_train.yaml --condition 0.0

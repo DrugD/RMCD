@@ -1,0 +1,110 @@
+# data:
+#   data: GDSCv2_SMALL
+#   dir: 'data/'
+#   batch_size:    
+#     train: 512
+#     test: 512
+#   # max_node_num: 96
+#   # max_feat_num: 10
+#   max_node_num: 100
+#   max_feat_num: 10
+#   init: atom
+
+data:
+  data: GDSCv2
+  dir: 'data/'
+  batch_size:    
+    train: 512
+    test: 512
+  max_node_num: 100
+  max_feat_num: 10
+  init: atom
+
+sde:
+  x: 
+    type: VP
+    beta_min: 0.1
+    beta_max: 1.0
+    num_scales: 1000
+  adj:
+    type: VE
+    beta_min: 0.1
+    beta_max: 1.0
+    num_scales: 1000
+
+model:
+  x: ScoreNetworkX
+  adj: ScoreNetworkA
+  conv: GCN
+  num_heads: 4
+  depth: 2
+  adim: 16
+  nhid: 16
+  num_layers: 3
+  num_linears: 3
+  c_init: 2
+  c_hid: 8
+  c_final: 4
+
+train:
+  task: drp
+  # name: condition_rand_20%_mask
+  name: based_qm9_control_noguidescale_maybetrue_conditionwithtimeembedding_allgradtrue_v1e_gdss_drp_mask050
+  pretrain: ./checkpoints/QM9/Mar10-01:49:59.pth
+  resume: False
+  # resume: ./checkpoints/GDSCv2/Mar27-06:25:19_40.pth
+  # /home/nas/lk/GDSS/checkpoints/QM9/QM9.pth
+  # /home/nas/lk/GDSS/checkpoints/ZINC250k/ZINC250k.pth
+  num_epochs: 500
+  save_interval: 1
+  print_interval: 1
+  reduce_mean: False
+  lr: 0.0001
+  lr_schedule: True
+  ema: 0.999
+  weight_decay: 0.0005
+  grad_norm: 1.0
+  lr_decay: 0.999
+  eps: 1.0e-5
+
+
+
+controller:
+  type: text
+  base_model: TransEDRP
+  model_config: config/Transedrp_CLIP_KGE.yaml
+  cell_csv_path: ./data/PANCANCER_Genetic_feature.csv
+  model_type: 1
+  model_name: TransE
+  marker: KGE_Text_Number
+  cuda_name: cuda
+  dataset_name: GDSCv2
+  cldr_ckpt: ./checkpoints/GDSCv2/CLDR_Mar12-07:01:52.pth
+  model:
+
+    drug_module: 
+      fc_1_dim: 512
+      fc_2_dim: 128
+      dropout: 0.5
+      transformer_dropout: 0.5
+
+    cell_module: 
+      module_name: Transformer
+      input_cell_feature_dim: 735
+      fc_1_dim: 128
+      layer_num: 3
+      layer_hyperparameter:
+        - 7
+        - 7
+        - 7
+      transformer_dropout: 0.5
+
+
+    fusion_module:
+      fc_1_dim: 1024
+      fc_2_dim: 256
+      fc_3_dim: 1
+      dropout: 0.5
+      transformer_dropout: 0.5
+      fusion_mode: concat
+

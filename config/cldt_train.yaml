@@ -1,0 +1,91 @@
+data:
+  data: kiba
+  dir: './data/'
+  batch_size: 
+    train: 1024
+    test: 1024
+  PRESICION: 1
+  max_node_num: 100
+  max_feat_num: 10
+  init: atom
+
+sde:
+  x: 
+    type: VP
+    beta_min: 0.1
+    beta_max: 1.0
+    num_scales: 1000
+  adj:
+    type: VE
+    beta_min: 0.1
+    beta_max: 1.0
+    num_scales: 1000
+
+model:
+  x: ScoreNetworkX
+  adj: ScoreNetworkA
+  conv: GCN
+  num_heads: 4
+  depth: 2
+  adim: 16
+  nhid: 16
+  num_layers: 3
+  num_linears: 3
+  c_init: 2
+  c_hid: 8
+  c_final: 4
+
+
+train:
+  name: cldt_bs_1024_loadfrom_kiba
+  num_epochs: 100
+  save_interval: 5
+  print_interval: 5
+  reduce_mean: False
+  lr: 0.0001
+  lr_schedule: True
+  ema: 0.999
+  weight_decay: 0.0001
+  grad_norm: 1.0
+  lr_decay: 0.999
+  eps: 1.0e-5
+
+controller:
+  type: text
+  base_model: TransDTA
+  model_config: ""
+  target_txt_path: ./data/kiba/proteins.txt
+  model_type: 1
+  model_name: TransE
+  marker: KGE_Text_Number
+  cuda_name: cuda
+  dataset_name: kiba
+  model:
+
+    drug_module: 
+      fc_1_dim: 512
+      fc_2_dim: 128
+      dropout: 0.5
+      transformer_dropout: 0.5
+
+    target_module: 
+      module_name: Transformer
+      input_cell_feature_dim: 735
+      fc_1_dim: 128
+      layer_num: 3
+      layer_hyperparameter:
+        - 7
+        - 7
+        - 7
+      transformer_dropout: 0.5
+
+
+    fusion_module:
+      fc_1_dim: 1024
+      fc_2_dim: 256
+      fc_3_dim: 1
+      dropout: 0.5
+      transformer_dropout: 0.5
+      fusion_mode: concat
+      
+PRECISION: 2

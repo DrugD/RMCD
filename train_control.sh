@@ -1,0 +1,2 @@
+# CUDA_VISIBLE_DEVICES=2 python main.py --type control --config /home/lk/project/mol_generate/GDSS/config_control/drp_train.yaml --condition 0.0
+CUDA_VISIBLE_DEVICES=0 python main.py --type control_dta --config /home/lk/project/mol_generate/GDSS/config_control/dta_train.yaml --condition 0.0
