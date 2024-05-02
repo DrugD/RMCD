@@ -1,25 +1,19 @@
-# Score-based Generative Modeling of Graphs via the System of Stochastic Differential Equations
+# Next-generation Molecular Graph Generation: Leveraging Regression Perception and Relationship-aware Diffusion (RMCD)
 
-Official Code Repository for the paper [Score-based Generative Modeling of Graphs via the System of Stochastic Differential Equations](https://arxiv.org/abs/2202.02514) (ICML 2022).
+Official Code Repository for the paper 'Next-generation Molecular Graph Generation:
+Leveraging Regression Perception and
+Relationship-aware Diffusion'.
 
-> 🔴**UPDATE**:  We provide an seperate code repo for **GDSS using Graph Transformer** [here](https://github.com/DongkiKim95/GDSS-Transformer)!
 
-
-In this repository, we implement the *Graph Diffusion via the System of SDEs* (GDSS).
-
-<p align="center">
-    <img width="750" src="assets/concept.jpg"/>
-</p>
 
 ## Contribution
 
-+ We propose a novel score-based generative model for graphs that overcomes the limitation of previous generative methods, by introducing a diffusion process for graphs that can generate node features and adjacency simultaneously via the system of SDEs.
-+ We derive novel training objectives to estimate the gradient of the joint log-density for the proposed diffusion process and further introduce an efficient integrator to solve the proposed system of SDEs.
-+ We validate our method on both synthetic and real-world graph generation tasks, on which ours outperforms existing graph generative models.
++ We propose a natural language-based drug molecular contrast learning as a conditional diffusion model fine-tuning method, which is the first molecular diffusion model for drug-x type multitask conditions.
++ We use a zero-convolution layer stepwise control fine-tuning strategy to fine-tune a diffusion model trained on an unconditional large molecular data set.
 
 ## Dependencies
 
-GDSS is built in **Python 3.7.0** and **Pytorch 1.10.1**. Please use the following command to install the requirements:
+RMCD is built in **Python 3.8.18** and **Pytorch 2.0.1**. Please use the following command to install the requirements:
 
 ```sh
 pip install -r requirements.txt
@@ -37,7 +31,7 @@ conda install -c conda-forge rdkit=2020.09.1.0
 
 ### 1. Preparations
 
-We provide four **generic graph datasets** (Ego-small, Community_small, ENZYMES, and Grid) and two **molecular graph datasets** (QM9 and ZINC250k). 
+We provide two **molecular graph datasets** (QM9 and ZINC250k) and one **drug response dataset** (GDSCv2). 
 
 We additionally provide the commands for generating generic graph datasets as follows:
 
@@ -66,9 +60,9 @@ The configurations are provided on the `config/` directory in `YAML` format.
 Hyperparameters used in the experiments are specified in the Appendix C of our paper.
 
 
-### 3. Training
+### 3. Training Uncondition Model
 
-We provide the commands for the following tasks: Generic Graph Generation and Molecule Generation.
+We provide the commands for the following task: Molecule Generation.
 
 To train the score models, first modify `config/${dataset}.yaml` accordingly, then run the following command.
 
@@ -86,14 +80,60 @@ and
 CUDA_VISIBLE_DEVICES=0,1 python main.py --type train --config zinc250k --seed 42
 ```
 
-### 4. Generation and Evaluation
+### 4. Training Condition Contrastive Learning Model
+
+We provide the commands for the following task: Molecule Generation.
+
+To train the score models, first modify `config/$cl{task}_main.yaml` accordingly, such as `dr` for `drug response`, then run the following command.
+
+```sh
+CUDA_VISIBLE_DEVICES=${gpu_ids} python main.py --type cl{task}_train --config ${train_config} --seed ${seed}
+```
+
+for example, 
+
+```sh
+CUDA_VISIBLE_DEVICES=0 python main.py --type cldr_train --config cldr_train --seed 42
+```
+and
+```sh
+CUDA_VISIBLE_DEVICES=0,1 python main.py --type cldt_train --config cldt_train --seed 42
+```
+
+
+### 5. Training Condition  Model
+
+We provide the commands for the following task: Molecule Generation.
+
+To train the score models, first modify `config_control/{task}_train{_multi_data}.yaml` accordingly, such as `drp` for `drug response`, `_multi_data` is default， then run the following command.
+
+```sh
+CUDA_VISIBLE_DEVICES=${gpu_ids} python main.py --type train --config config_control/${train_config} --seed ${seed}
+```
+
+for example, 
+
+```sh
+CUDA_VISIBLE_DEVICES=0 python main.py --type control_drp --config config_control/drp_train --seed 42
+```
+
+```sh
+CUDA_VISIBLE_DEVICES=0 python main.py --type multidata_control_drp --config config_control/drp_train --seed 42
+```
+and
+```sh
+CUDA_VISIBLE_DEVICES=0,1 python main.py --type multidata_control_dta --config config_control/dta_train --seed 42
+```
+
+### 6. Generation and Evaluation
 
 To generate graphs using the trained score models, run the following command.
 
 ```sh
-CUDA_VISIBLE_DEVICES=${gpu_ids} python main.py --type sample --config sample_qm9
+CUDA_VISIBLE_DEVICES=${gpu_ids} python main.py --type {task}_condition_sample --config sample_{dataset}
 ```
 or
+
 ```sh
 CUDA_VISIBLE_DEVICES=${gpu_ids} python main.py --type sample --config sample_zinc250k
 ```
@@ -103,30 +143,7 @@ CUDA_VISIBLE_DEVICES=${gpu_ids} python main.py --type sample --config sample_zin
 
 We provide checkpoints of the pretrained models on the `checkpoints/` directory, which are used in the main experiments.
 
-+ `ego_small/gdss_ego_small.pth`
-+ `community_small/gdss_community_small.pth`
-+ `ENZYMES/gdss_enzymes.pth`
-+ `grid/gdss_grid.pth`
-+ `QM9/gdss_qm9.pth`
-+ `ZINC250k/gdss_zinc250k.pth` 
++ `['GDSCv2', 'QM9']/date-time.pth` 
 
-We also provide a checkpoint of improved GDSS that uses GMH blocks instead of GCN blocks in $s_{\theta,t}$ (i.e., that uses `ScoreNetworkX_GMH` instead of `ScoreNetworkX`). The numbers of training epochs are 800 and 1000 for $s_{\theta,t}$ and $s_{\phi,t}$, respectively. For this checkpoint, use Rev. + Langevin solver and set `snr` as 0.2 and `scale_eps` as 0.8.
-
-+ `ZINC250k/gdss_zinc250k_v2.pth` 
-
-## Citation
-
-If you found the provided code with our paper useful in your work, we kindly request that you cite our work.
-
-```BibTex
-@article{jo2022GDSS,
-  author    = {Jaehyeong Jo and
-               Seul Lee and
-               Sung Ju Hwang},
-  title     = {Score-based Generative Modeling of Graphs via the System of Stochastic
-               Differential Equations},
-  journal   = {arXiv:2202.02514},
-  year      = {2022},
-  url       = {https://arxiv.org/abs/2202.02514}
-}
-```
++ `QM9/qm9.pth`
++ `ZINC250k/zinc250k.pth` 
