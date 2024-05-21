@@ -1,19 +1,18 @@
-# Next-generation Molecular Graph Generation: Leveraging Regression Perception and Relationship-aware Diffusion (RMCD)
+# Regressor-free Molecule Generation to support Drug Response Prediction (Regressor-free guidance)
 
-Official Code Repository for the paper 'Next-generation Molecular Graph Generation:
-Leveraging Regression Perception and
-Relationship-aware Diffusion'.
+Official Code Repository for the paper 'Regressor-free Molecule Generation to support Drug Response Prediction'.
 
 
 
 ## Contribution
 
-+ We propose a natural language-based drug molecular contrast learning as a conditional diffusion model fine-tuning method, which is the first molecular diffusion model for drug-x type multitask conditions.
-+ We use a zero-convolution layer stepwise control fine-tuning strategy to fine-tune a diffusion model trained on an unconditional large molecular data set.
++ Regressor-free guidance molecule generation is proposed to ensure sampling within a more effective space, where the regression controller model can encode the response value between the molecules and the cell lines as conditional guidance for molecule generation.
++ To enhance noise prediction performance, we introduce a dual-branch controlled noise prediction model for score estimation, named DBControl. DBControl model consists of two GNN-based branches, each undergoing unconditional training and conditional mixed training, respectively.
++ Experimental results demonstrate that our method outperforms the state-of-the-art baselines in conditional molecular graph generation for the DRP task. Furthermore, we provide an effectiveness proof of our method.
 
 ## Dependencies
 
-RMCD is built in **Python 3.8.18** and **Pytorch 2.0.1**. Please use the following command to install the requirements:
+Regressor-free guidance is built in **Python 3.8.18** and **Pytorch 2.0.1**. Please use the following command to install the requirements:
 
 ```sh
 pip install -r requirements.txt
