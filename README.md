@@ -143,6 +143,12 @@ CUDA_VISIBLE_DEVICES=${gpu_ids} python main.py --type sample --config sample_zin
 We provide checkpoints of the pretrained models on the `checkpoints/` directory, which are used in the main experiments.
 
 + `['GDSCv2', 'QM9']/date-time.pth` 
-
 + `QM9/qm9.pth`
 + `ZINC250k/zinc250k.pth` 
+
+We have uploaded a zip pack of code that can be used for conditional sampling directly, which can be downloaded (https://drive.google.com/file/d/15He7YHE39wT9tdNcqSOPR-bvzvO_Isr9/view?usp=drive_link).
+
+```sh
+cd ./RFMG_Sampling
+CUDA_VISIBLE_DEVICES=${gpu_ids} python main.py
+```
